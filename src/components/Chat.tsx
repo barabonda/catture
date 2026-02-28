@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { CameraView } from './CameraView';
 import { JourneyReview } from './JourneyReview';
 
-const STORAGE_KEY = 'little_steps_messages';
+const STORAGE_KEY = 'catture_messages';
 
 const BubbleOverlay = () => (
   <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100">
@@ -252,7 +252,7 @@ export function Chat() {
       {/* Top bar */}
       <div className="flex items-center justify-between px-5 pt-5 pb-2 z-10">
         <div className="flex items-center gap-2">
-          <h1 className="text-lg font-bold text-slate-700">작은 한 걸음</h1>
+          <h1 className="text-lg font-bold text-slate-700">catture!</h1>
         </div>
         <div className="flex items-center gap-1">
           <button
