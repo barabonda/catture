@@ -10,7 +10,7 @@
 
 </div>
 
-# 🐾 CATTURE— An AI Friend You Talk to Through Photos  
+# 🐈 CATTURE— 
 ### A Companion That Creates the First Action for Isolated Youth
 
 ---
