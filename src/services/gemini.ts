@@ -1,7 +1,8 @@
 import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
 import { ChatMessage } from '../types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const apiKey = process.env.GEMINI_API_KEY || '';
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 const SYSTEM_INSTRUCTION = `
 당신은 번아웃이나 무기력증을 겪고 있는 청년들을 돕는 따뜻하고 다정한 AI 동반자 '작은 한 걸음'입니다.
@@ -18,7 +19,87 @@ const SYSTEM_INSTRUCTION = `
 - 다음 퀘스트나 질문은 반드시 "사진으로 찍어서 보여줄래?" 형태로 끝내어 사용자가 사진으로 답할 수 있게 유도하세요.
 - 한 번에 하나의 작은 퀘스트만 제안하세요.
 - 시스템 메시지로 [알람]이 들어오면, 유저의 안부를 묻고 주변을 찍어달라고 가볍게 요청하세요.
+- 3줄 이내로 말해주세요.
 `;
+
+export async function* generateChatResponseStream(
+  history: ChatMessage[],
+  newMessage?: string,
+  base64Image?: string,
+  mimeType?: string
+): AsyncGenerator<string, void, unknown> {
+  if (!ai) {
+    yield "API 키가 설정되지 않았어. .env 파일에 GEMINI_API_KEY를 설정해줘!";
+    return;
+  }
+
+  try {
+    const contents = history.map((msg) => {
+      const parts: any[] = [];
+      if (msg.text) {
+        parts.push({ text: msg.text });
+      } else if (msg.role === 'user') {
+        parts.push({ text: "[사진 전송됨]" });
+      }
+      
+      if (msg.base64Data && msg.mimeType && msg.role === 'user') {
+        parts.push({
+          inlineData: {
+            data: msg.base64Data,
+            mimeType: msg.mimeType,
+          },
+        });
+      }
+      return {
+        role: msg.role === 'model' ? 'model' : 'user',
+        parts,
+      };
+    });
+
+    const currentParts: any[] = [];
+    if (newMessage) {
+      currentParts.push({ text: newMessage });
+    } else {
+      currentParts.push({ text: "[사진 전송됨]" });
+    }
+    
+    if (base64Image && mimeType) {
+      currentParts.push({
+        inlineData: {
+          data: base64Image,
+          mimeType: mimeType,
+        },
+      });
+    }
+
+    contents.push({
+      role: 'user',
+      parts: currentParts,
+    });
+
+    const responseStream = await ai.models.generateContentStream({
+      model: 'gemini-3-flash-preview',
+      contents: contents as any,
+      config: {
+        systemInstruction: SYSTEM_INSTRUCTION,
+        temperature: 0.7,
+      },
+    });
+
+    let chunkIndex = 0;
+    for await (const chunk of responseStream) {
+      const text = chunk.text;
+      if (text) {
+        console.log(`[Stream] chunk #${chunkIndex++}: "${text.slice(0, 30)}..." (${text.length} chars)`);
+        yield text;
+      }
+    }
+    console.log(`[Stream] done, total ${chunkIndex} chunks`);
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    yield "앗, 뭔가 오류가 발생했어. 조금 쉬었다가 다시 해볼까?";
+  }
+}
 
 export async function generateChatResponse(
   history: ChatMessage[],
@@ -26,6 +107,10 @@ export async function generateChatResponse(
   base64Image?: string,
   mimeType?: string
 ): Promise<string> {
+  if (!ai) {
+    return "API 키가 설정되지 않았어. .env 파일에 GEMINI_API_KEY를 설정해줘!";
+  }
+
   try {
     const contents = history.map((msg) => {
       const parts: any[] = [];
