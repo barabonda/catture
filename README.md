@@ -9,7 +9,8 @@
   <a href="https://aistudio.google.com/apps">Start building</a>
 
 </div>
-# 🐾 catture — An AI Friend You Talk to Through Photos  
+
+# 🐾 CATTURE— An AI Friend You Talk to Through Photos  
 ### A Companion That Creates the First Action for Isolated Youth
 
 ---
