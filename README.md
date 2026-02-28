@@ -15,7 +15,7 @@
 
 ---
 
-## [0:00–0:30] The Problem
+## The Problem
 
 The number of socially isolated and withdrawn youth in Korea has **more than doubled in the past two years**.  
 Among them, **30% have remained isolated for over five years**.
@@ -31,7 +31,7 @@ The moment they begin to think about it, they stop — and return to where they 
 
 ---
 
-## [0:30–0:50] The Solution
+## [The Solution
 
 So **catture removes the time to hesitate.**
 
@@ -50,7 +50,7 @@ Before you know it, you’re stepping outside.
 
 ---
 
-## [0:50–2:10] Live Demo Flow
+## Live Demo Flow
 
 ### 1️⃣ Take a photo of a messy room.
 
@@ -76,7 +76,7 @@ is suddenly looking at **sunlight.**
 
 ---
 
-## [2:10–2:40] Why It Works
+## [ Why It Works
 
 ### ① Immediate Action
 
